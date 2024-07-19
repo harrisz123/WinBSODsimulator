@@ -1,0 +1,72 @@
+import React, { useState, useEffect } from 'react';
+import { AlertCircle } from 'lucide-react';
+
+const WindowsErrorScreen = () => {
+  const [percentage, setPercentage] = useState(0);
+  const [showRecovery, setShowRecovery] = useState(true);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPercentage((prevPercentage) => {
+        if (prevPercentage < 100) {
+          return prevPercentage + 1;
+        }
+        clearInterval(timer);
+        return 100;
+      });
+    }, 100);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const toggleScreen = () => {
+    setShowRecovery(!showRecovery);
+    setPercentage(0);
+  };
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-blue-500 text-white font-sans p-6">
+      {showRecovery ? (
+        <div className="max-w-2xl">
+          <h1 className="text-6xl font-light mb-8">Recovery</h1>
+          <p className="text-2xl mb-4">It looks like Windows didn't load correctly</p>
+          <p className="mb-8">
+            If you'd like to restart and try again, choose "Restart my PC" below. Otherwise, choose "See advanced repair options"
+            for troubleshooting tools and advanced options. If you don't know which option is right for you, contact someone you
+            trust to help with this.
+          </p>
+          <div className="flex space-x-4">
+            <button onClick={toggleScreen} className="bg-transparent border-2 border-white py-2 px-4 hover:bg-white hover:text-blue-500 transition-colors">
+              See advanced repair options
+            </button>
+            <button onClick={toggleScreen} className="bg-transparent border-2 border-white py-2 px-4 hover:bg-white hover:text-blue-500 transition-colors">
+              Restart my PC
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="text-center">
+          <div className="text-8xl mb-8">:(</div>
+          <p className="text-2xl mb-4">Your PC ran into a problem and needs to restart. We're</p>
+          <p className="text-2xl mb-8">just collecting some error info, and then we'll restart for you.</p>
+          <p className="text-2xl mb-8">{percentage}% complete</p>
+          <div className="flex justify-center items-center mb-8">
+            <div className="mr-4">
+              <AlertCircle size={24} />
+            </div>
+            <p className="text-sm">
+              For more information about this issue and possible fixes, visit https://www.windows.com/stopcode
+            </p>
+          </div>
+          <p className="text-sm">If you call a support person, give them this info:</p>
+          <p className="text-sm">Stop code: CRITICAL_PROCESS_DIED</p>
+          <button onClick={toggleScreen} className="mt-8 bg-transparent border-2 border-white py-2 px-4 hover:bg-white hover:text-blue-500 transition-colors">
+            Toggle Screen
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default WindowsErrorScreen;
